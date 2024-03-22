@@ -1,12 +1,18 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+from abc import ABC, abstractmethod
 
-class Entity:
-    def __init__(self):
-        self.name = None
-        self.surf = None
-        self.rect = None
+import pygame.image
 
-    def move(self, ):
+
+# CLASSE ABSTRACT(ABC)
+class Entity(ABC):
+    def __init__(self, name: str, position: tuple):
+        self.name = name
+        self.surf = pygame.image.load('./Imagens/' + name + '.png'). convert_alpha()
+        self.rect = self.surf.get_rect(left=position[0], top=position[1])
+        self.speed = 0
+
+    @abstractmethod
+    def move(self):
         pass
-
