@@ -8,8 +8,11 @@ from pygame import Surface, Rect
 from pygame.font import Font
 
 from CODE.Constantes import COLOR_WHITE, MENU_OPTION, EVENT_ENEMY
+from CODE.Enemy import Enemy
 from CODE.Entity import Entity
 from CODE.EntityFactory import EntityFactory
+from CODE.EntityMediator import EntityMediator
+from CODE.Player import Player
 
 
 class Level:
@@ -31,10 +34,25 @@ class Level:
         clock = pygame.time.Clock()  # VELOCIDADE BACKGROUND
         while True:
             clock.tick(60)
+            # Desenhar na tela
             for ent in self.entity_list:
                 self.screen.blit(source=ent.surf, dest=ent.rect)
-                self.level_text(14, f'FPS:{clock.get_fps(): .0f}', COLOR_WHITE, (10, 10))
                 ent.move()
+                if isinstance(ent, (Player, Enemy)):
+                    shoot = ent.shoot()
+                    if shoot is not None:
+                        self.entity_list.append(shoot)
+
+            # Texto a ser desenhado na tela
+            self.level_text(14, f'FPS:{clock.get_fps(): .0f}', COLOR_WHITE, (10, 10))
+            self.level_text(14, f'entidades:{len(self.entity_list)}', COLOR_WHITE, (10, 25))
+            # Atualizar tela
+            pygame.display.flip()
+            # verificar relacionamentos de entidades
+            EntityMediator.verify_collision(entity_list=self.entity_list)
+            EntityMediator.verify_health(entity_list=self.entity_list)
+
+            # conferir eventos
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -42,7 +60,7 @@ class Level:
                 if event.type == EVENT_ENEMY:
                     choice = random.choice(('Enemy1', 'Enemy2'))
                     self.entity_list.append(EntityFactory.get_entity(choice))
-            pygame.display.flip()
+
             pass
 
     def level_text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
