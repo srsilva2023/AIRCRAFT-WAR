@@ -7,7 +7,7 @@ import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from CODE.Constantes import COLOR_WHITE, MENU_OPTION, EVENT_ENEMY
+from CODE.Constantes import COLOR_WHITE, MENU_OPTION, EVENT_ENEMY, SCREEN_HEIGHT, COLOR_GREEN, COLOR_CYAN
 from CODE.Enemy import Enemy
 from CODE.Entity import Entity
 from CODE.EntityFactory import EntityFactory
@@ -42,10 +42,14 @@ class Level:
                     shoot = ent.shoot()
                     if shoot is not None:
                         self.entity_list.append(shoot)
+                if ent.name == 'Player1':
+                    self.level_text(14, f'Player1: - Health: {ent.health} Score: {ent.score}', COLOR_GREEN, (10, 25))
+                if ent.name == 'Player2':
+                    self.level_text(14, f'Player2: - Health: {ent.health} Score: {ent.score}', COLOR_CYAN, (10, 45))
 
             # Texto a ser desenhado na tela
-            self.level_text(14, f'FPS:{clock.get_fps(): .0f}', COLOR_WHITE, (10, 10))
-            self.level_text(14, f'entidades:{len(self.entity_list)}', COLOR_WHITE, (10, 25))
+            self.level_text(14, f'FPS:{clock.get_fps(): .0f}', COLOR_WHITE, (10, SCREEN_HEIGHT - 35))
+            self.level_text(14, f'entidades:{len(self.entity_list)}', COLOR_WHITE, (10, SCREEN_HEIGHT - 20))
             # Atualizar tela
             pygame.display.flip()
             # verificar relacionamentos de entidades
